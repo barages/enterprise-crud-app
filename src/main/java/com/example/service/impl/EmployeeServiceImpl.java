@@ -18,23 +18,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponse create(EmployeeRequest r) {
         Employee e = new Employee();
         e.setName(r.name());
-        // Map incoming DepartmentDto to the Deparment entity instance.
-        // We don't perform a DB lookup here; populate the entity with provided values.
-        if (r.department() != null) {
-            Deparment d = new Deparment();
-            d.setId(r.department().id());
-            d.setName(r.department().name());
-            d.setDescription(r.department().description());
-            e.setDepartment(d);
-        } else {
-            e.setDepartment(null);
-        }
+        Department d = new Department();
+        d.setId(r.department().id());
+        d.setName(r.department().name());
+        d.setDescription(r.department().description());
+        e.setDepartment(d);
+
         e.setSalary(r.salary());
         e = repo.save(e);
         return new EmployeeResponse(e.getId(), e.getName(), e.getDepartment() != null ? e.getDepartment().getName() : null, e.getSalary());
     }
 
     public List<EmployeeResponse> getAll() {
-        return repo.findAll().stream().map(e -> new EmployeeResponse(e.getId(), e.getName(), e.getDepartment() != null ? e.getDepartment().getName() : null, e.getSalary())).collect(Collectors.toList());
+        List<EmployeeResponse> list = new ArrayList<>();
+        for (Employee e : repo.findAll()) {
+            EmployeeResponse employeeResponse = new EmployeeResponse(e.getId(), e.getName(), e.getDepartment() != null ? e.getDepartment().getName() : null, e.getSalary());
+            list.add(employeeResponse);
+        }
+        return list;
     }
 }

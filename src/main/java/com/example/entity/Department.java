@@ -10,7 +10,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Deparment extends BaseEntity {
+public class Department extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
