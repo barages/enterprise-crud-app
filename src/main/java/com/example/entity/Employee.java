@@ -19,7 +19,7 @@ public class Employee extends BaseEntity {
 	@Column
 	private Double salary;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@JoinColumn(name = "department_id", nullable = false)
 	private Department department;
 }

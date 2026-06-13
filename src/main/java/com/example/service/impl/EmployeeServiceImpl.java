@@ -14,18 +14,26 @@ import com.example.service.*;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository repo;
+    private final DepartmentRepository departmentRepository;
 
     public EmployeeResponse create(EmployeeRequest r) {
-        Employee e = new Employee();
-        e.setName(r.name());
-        Department d = new Department();
-        d.setId(r.department().id());
-        d.setName(r.department().name());
-        d.setDescription(r.department().description());
-        e.setDepartment(d);
 
-        e.setSalary(r.salary());
-        e = repo.save(e);
+        Department department = departmentRepository
+                .findByName(r.department().name())
+                .orElseGet(() -> {
+                    Department newDept = new Department();
+                    newDept.setName(r.department().name());
+                    newDept.setDescription(r.department().description());
+                    return departmentRepository.save(newDept);
+                });
+
+        Employee employee = new Employee();
+        employee.setName(r.name());
+        employee.setSalary(r.salary());
+
+        employee.setDepartment(department);
+
+        Employee e = repo.save(employee);
         return new EmployeeResponse(e.getId(), e.getName(), e.getDepartment() != null ? e.getDepartment().getName() : null, e.getSalary());
     }
 
