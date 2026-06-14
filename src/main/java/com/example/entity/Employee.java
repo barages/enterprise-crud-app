@@ -5,7 +5,9 @@ import lombok.*;
 
 @Entity
 @Table(name = "employees")
-@Data
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Employee extends BaseEntity {

@@ -6,10 +6,10 @@ import java.util.*;
 
 @Entity
 @Table(name = "departments")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Getter
+@Setter
 public class Department extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
