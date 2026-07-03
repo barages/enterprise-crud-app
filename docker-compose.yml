@@ -1,8 +1,38 @@
+version: '3.8'
+
 services:
- mysql:
-  image: mysql:8
-  environment:
-   MYSQL_ROOT_PASSWORD: root
-   MYSQL_DATABASE: test1
-  ports:
-   - '3306:3306'
+  mysql:
+    image: mysql:8
+    container_name: enterprise-crud-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-test1}
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '${DB_PORT:-3306}:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root}"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  app:
+    build: .
+    container_name: enterprise-crud-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:${DB_PORT:-3306}/${DB_NAME:-test1}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO:-update}
+      SERVER_PORT: ${SERVER_PORT:-8080}
+    ports:
+      - '${SERVER_PORT:-8080}:${SERVER_PORT:-8080}'
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
